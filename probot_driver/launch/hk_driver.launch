@@ -1,0 +1,12 @@
+<launch>
+  <arg name="robot_ip" default="192.168.2.64"/>
+  <arg name="robot_port" default="8080"/>
+  <arg name="use_action_server" default="true"/>
+  
+  <!-- 海康驱动节点 -->
+  <node name="hk_driver_node" pkg="probot_driver" type="hk_driver_node.py" output="screen">
+    <param name="robot_ip" value="$(arg robot_ip)"/>
+    <param name="robot_port" value="$(arg robot_port)"/>
+    <param name="use_action_server" value="$(arg use_action_server)"/>
+  </node>
+</launch>

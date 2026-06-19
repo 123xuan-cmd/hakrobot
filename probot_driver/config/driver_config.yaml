@@ -1,0 +1,29 @@
+# 海康机械臂驱动配置文件
+
+robot:
+  ip: "192.168.2.64"
+  port: 8080
+  
+  # 关节名称（与URDF一致）
+  joint_names:
+    - "joint1"
+    - "joint2"
+    - "joint3"
+    - "joint4"
+    - "joint5"
+    - "j_hkrobot"
+  
+connection:
+  timeout: 5.0
+  reconnect_attempts: 3
+  reconnect_delay: 1.0
+  
+trajectory:
+  execution_rate: 10.0  # Hz
+  interpolation: true
+  
+communication:
+  format: "csv"  # 逗号分隔值
+  precision: 4   # 小数点后位数
+  line_ending: "\n"  # 换行符
+  delimiter: ","     # 分隔符

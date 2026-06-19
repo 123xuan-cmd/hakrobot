@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: hk_robot_gripper
+    relative_path: urdf/hk_robot_gripper.urdf
+    xacro_args: ""
+  SRDF:
+    relative_path: config/hk_robot_gripper.srdf
+  CONFIG:
+    author_name: frz
+    author_email: 3364489071@qq.com
+    generated_timestamp: 1776648308

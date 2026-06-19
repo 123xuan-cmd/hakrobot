@@ -1,0 +1,44 @@
+# 海康机械臂演示配置文件
+
+robot:
+  group_name: "hkrobot"
+  
+  # 关节名称（与URDF一致）
+  joint_names:
+    - "joint1"
+    - "joint2"
+    - "joint3"
+    - "joint4"
+    - "joint5"
+    - "j_hkrobot"
+  
+  # 预设位置
+  named_poses:
+    - "pose1"
+    - "pose2"
+    - "pose3"
+
+planning:
+  velocity_scaling: 0.3
+  acceleration_scaling: 0.3
+  planning_time: 10.0
+  planning_attempts: 10
+  planner_id: "RRTConnectkConfigDefault"
+  
+  # 可选的规划器
+  available_planners:
+    - "RRTConnectkConfigDefault"
+    - "RRTstarkConfigDefault"
+    - "PRMkConfigDefault"
+    - "TRRTkConfigDefault"
+
+execution:
+  trajectory_execution_rate: 10.0  # Hz
+  
+demo:
+  pause_time: 2.0  # 演示间隔时间（秒）
+  
+collision:
+  # 碰撞检测参数
+  padding: 0.01  # 碰撞填充（米）
+  scale: 1.0     # 碰撞缩放

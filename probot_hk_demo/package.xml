@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>probot_hk_demo</name>
+  <version>1.0.0</version>
+  <description>海康机械臂演示程序</description>
+  
+  <maintainer email="your_email@example.com">Your Name</maintainer>
+  <license>BSD</license>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+  
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>moveit_commander</build_depend>
+  <build_depend>moveit_msgs</build_depend>
+  <build_depend>trajectory_msgs</build_depend>
+  <build_depend>probot_driver</build_depend>
+  
+  <build_export_depend>rospy</build_export_depend>
+  <build_export_depend>std_msgs</build_export_depend>
+  <build_export_depend>geometry_msgs</build_export_depend>
+  <build_export_depend>moveit_commander</build_export_depend>
+  <build_export_depend>moveit_msgs</build_export_depend>
+  <build_export_depend>trajectory_msgs</build_export_depend>
+  <build_export_depend>probot_driver</build_export_depend>
+  
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>moveit_commander</exec_depend>
+  <exec_depend>moveit_msgs</exec_depend>
+  <exec_depend>trajectory_msgs</exec_depend>
+  <exec_depend>probot_driver</exec_depend>
+  
+  <export>
+  </export>
+</package>

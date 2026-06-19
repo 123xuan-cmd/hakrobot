@@ -1,0 +1,19 @@
+<launch>
+  <arg name="robot_ip" default="192.168.2.64"/>
+  <arg name="robot_port" default="8080"/>
+  <arg name="demo_type" default="0"/>
+  
+  <!-- 启动MoveIt和RViz -->
+  <include file="$(find hk_config)/launch/demo.launch"/>
+  
+  <!-- 启动海康驱动 -->
+  <include file="$(find probot_driver)/launch/hk_driver.launch">
+    <arg name="robot_ip" value="$(arg robot_ip)"/>
+    <arg name="robot_port" value="$(arg robot_port)"/>
+  </include>
+  
+  <!-- 启动碰撞检测演示 -->
+  <node name="demo_collision_node" pkg="probot_hk_demo" type="demo_collision.py" output="screen">
+    <param name="demo_type" value="$(arg demo_type)"/>
+  </node>
+</launch>
