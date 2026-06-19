@@ -1,0 +1,13 @@
+<launch>
+    <rosparam file="$(find hikrobot_camera)/config/camera.yaml" command="load" />
+    
+    <!-- 相机节点延迟2秒启动，等rviz先占好资源 -->
+    <node pkg="hikrobot_camera" type="hikrobot_camera" name="hikrobot_camera" 
+          respawn="false" output="screen"
+          launch-prefix="bash -c 'sleep 2; $0 $@'" />
+    
+    <!-- rviz延迟5秒启动 -->
+    <node pkg="rviz" type="rviz" name="rviz"
+          args="-d $(find hikrobot_camera)/rviz_config/hikrobot.rviz"
+          launch-prefix="bash -c 'sleep 5; $0 $@'" />
+</launch>

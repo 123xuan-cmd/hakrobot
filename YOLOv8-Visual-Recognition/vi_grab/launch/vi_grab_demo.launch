@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<launch>
+    <arg name="robot_ip"   default="192.168.2.64" />
+    <arg name="robot_port" default="8080" />
+
+    <!-- 1. 海康机械臂 TCP 驱动 -->
+    <include file="$(find probot_driver)/launch/hk_driver.launch">
+        <arg name="robot_ip"          value="$(arg robot_ip)" />
+        <arg name="robot_port"        value="$(arg robot_port)" />
+        <arg name="use_action_server" value="false" />
+    </include>
+
+    <!-- 2. 海康相机 -->
+    <include file="$(find hikrobot_camera)/launch/hikrobot_camera.launch" />
+
+    <!-- 3. 手眼外参 TF -->
+    <!-- tx ty tz  qx qy qz qw  父坐标系 子坐标系 发布频率(ms) -->
+    <node pkg="tf" type="static_transform_publisher" name="handeye_tf_publisher"
+          args="0.8069257484410287 -0.21426010259993233 1.3317410126411309
+                -0.7252377665226762 -0.6873142029357756 -0.027661831421397748 0.029397134798712445
+                base_link hikrobot_camera 100"
+          output="screen" />
+
+    <!-- 4. 视觉检测节点 -->
+    <node pkg="vi_grab" name="object_detect" type="vi_catch_yolov8.py" output="screen" />
+
+    <!-- 5. 抓取控制节点 -->
+    <node pkg="vi_grab" name="object_catch" type="vision_grab_moveit.py" output="screen" />
+
+</launch>

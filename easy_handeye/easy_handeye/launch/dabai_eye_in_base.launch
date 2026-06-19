@@ -1,0 +1,58 @@
+<?xml version="1.0" ?>
+<launch>
+
+    <!-- 参数定义 -->
+    <arg name="namespace_prefix" default="dabai_eye_in_hand_calibration" />
+    <arg name="camera_frame"     default="camera_color_optical_frame" />
+    <arg name="start_camera"     default="true" />
+
+    <!-- ========== 加载机器人 URDF ========== -->
+    <param name="robot_description"
+           command="cat $(find hk_robot)/urdf/hk_robot.urdf" />
+
+    <!-- ========== 1. 启动机械臂 TCP 驱动 ========== -->
+    <include file="$(find probot_driver)/launch/hk_driver.launch">
+        <arg name="robot_ip"          value="192.168.2.64" />
+        <arg name="robot_port"        value="8080" />
+        <arg name="use_action_server" value="true" />
+    </include>
+
+    <!-- ========== 2. 启动大白深度相机 ========== -->
+    <include file="$(find astra_camera)/launch/dabai.launch"
+             if="$(arg start_camera)" />
+
+    <!-- ========== 2.1 发布相机内参（四次标定平均结果） ========== -->
+    <node pkg="rostopic" type="rostopic" name="camera_info_publisher"
+          args="pub -r 30 /camera/color/camera_info_fixed sensor_msgs/CameraInfo
+          '{header: {frame_id: $(arg camera_frame)},
+            width: 640, height: 480,
+            distortion_model: plumb_bob,
+            D: [0.007437, -0.022885, 0.000385, -0.001417, 0.0],
+            K: [476.911, 0.0, 318.603, 0.0, 477.010, 233.190, 0.0, 0.0, 1.0],
+            R: [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0],
+            P: [476.911, 0.0, 318.603, 0.0, 0.0, 477.010, 233.190, 0.0, 0.0, 0.0, 1.0, 0.0]}'"
+          output="screen" />
+
+    <!-- ========== 3. 启动 ChArUco 标定板检测 ========== -->
+    <node name="charuco_tracker" pkg="probot_driver" type="charuco_detectortwo.py" output="screen">
+        <remap from="camera_info_in" to="/camera/color/camera_info_fixed" />
+        <remap from="image_in"       to="/camera/color/image_raw" />
+    </node>
+
+    <node pkg="tf2_ros" type="static_transform_publisher" name="camera_to_tool0_publisher"
+          args="0.0 0.0 0.0 0.0 0.0 0.0 1.0 tool0 hikrobot_camera" /> 
+
+    <!-- ========== 5. 启动 easy_handeye 眼在手上标定 ========== -->
+    <include file="$(find easy_handeye)/launch/calibrate.launch">
+        <arg name="eye_on_hand"             value="true" />
+        <arg name="namespace_prefix"        value="$(arg namespace_prefix)" />
+        <arg name="move_group"              value="hkrobot" />
+        <arg name="freehand_robot_movement" value="false" />
+        <arg name="robot_base_frame"        value="base_link" />
+        <arg name="robot_effector_frame"    value="tool0" />
+        <arg name="tracking_base_frame"     value="$(arg camera_frame)" />
+        <arg name="tracking_marker_frame"   value="camera_marker" />
+        <arg name="publish_dummy"           value="false" />
+    </include>
+
+</launch>

@@ -1,0 +1,23 @@
+# true 1 和 false 0 
+camera_ip: "192.168.2.1"
+width: 3200         
+height: 1944        
+Offset_x: 0             
+Offset_y: 0             
+
+FrameRateEnable: true   
+FrameRate: 7      
+
+ExposureTime: 35000 
+
+GammaEnable: true
+Gamma: 1.0             
+
+Gain: 9           
+
+SaturationEnable: true#
+Saturation: 150         
+
+TriggerMode: 0
+
+

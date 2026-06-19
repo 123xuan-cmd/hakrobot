@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+<launch>
+    <!-- 参数定义 -->
+    <arg name="namespace_prefix" default="hikrobot_eye_on_base_calibration" />
+
+    <!-- ========== 加载机器人 URDF ========== -->
+    <param name="robot_description"
+           command="cat $(find hk_robot)/urdf/hk_robot.urdf" />
+
+    <!-- ========== 1. 启动机械臂 TCP 驱动 ========== -->
+    <include file="$(find probot_driver)/launch/hk_driver.launch">
+        <arg name="robot_ip"          value="192.168.2.64" />
+        <arg name="robot_port"        value="8080" />
+        <arg name="use_action_server" value="true" />
+    </include>
+
+    <!-- ========== 2. 启动海康工业相机 ========== -->
+    <include file="$(find hikrobot_camera)/launch/hikrobot_camera.launch" />
+
+    <!-- ========== 2.1 发布相机内参（第3次标定结果） ========== -->
+    <node pkg="rostopic" type="rostopic" name="camera_info_publisher"
+          args="pub -r 10 /hikrobot_camera/camera_info_fixed sensor_msgs/CameraInfo
+          '{header: {frame_id: hikrobot_camera},
+            width: 3200, height: 1944,
+            distortion_model: plumb_bob,
+            D: [0.011613, -0.237524, 0.005088, 0.002590, 0.0],
+            K: [4298.340807, 0.0, 1530.311199, 0.0, 4292.924619, 1118.179455, 0.0, 0.0, 1.0],
+            R: [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0],
+            P: [4288.188457, 0.0, 1533.968055, 0.0, 0.0, 4290.706185, 1122.357496, 0.0, 0.0, 0.0, 1.0, 0.0]}'"
+          output="screen" />
+
+    <!-- ========== 3. 启动 ChArUco 标定板检测 ========== -->
+    <node name="charuco_tracker" pkg="probot_driver" type="charuco_detector.py" output="screen">
+        <remap from="camera_info_in" to="/hikrobot_camera/camera_info_fixed" />
+        <remap from="image_in"       to="/hikrobot_camera/rgb" />
+    </node>
+
+
+    <!-- ========== 4. 启动 easy_handeye 手眼标定 ========== -->
+    <include file="$(find easy_handeye)/launch/calibrate.launch">
+        <arg name="eye_on_hand"             value="false" />
+        <arg name="namespace_prefix"        value="$(arg namespace_prefix)" />
+        <arg name="move_group"              value="hkrobot" />
+        <arg name="freehand_robot_movement" value="false" />
+        <arg name="robot_base_frame"        value="base_link" />
+        <arg name="robot_effector_frame"    value="tool0" />
+        <arg name="tracking_base_frame"     value="hikrobot_camera" />
+        <arg name="tracking_marker_frame"   value="camera_marker" />
+        <arg name="publish_dummy"           value="false" />
+    </include>
+
+</launch>
